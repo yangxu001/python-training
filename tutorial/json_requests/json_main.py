@@ -54,7 +54,7 @@ print json.dumps(json_data["widget"]["window"]["width"])
 print json.dumps(json_data["widget"]["text"]["data"])
 
 try:
-    print json.loads(object_data)
+    print json.dumps(object_data)
 except Exception as e:
     print e
 
