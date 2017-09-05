@@ -2,83 +2,66 @@
 #coding:utf-8
 import requests
 import json
-import os
 
-class datacapture:
+allgroups_id_name = []
+allgroups_userid_title = []
+allgroups_name_title = []
 
-	def __init__(self):
-		pass
+class DataCapture:
+	def capture_userinfo(self):
+		global allgroups_id_name
+		allgroups_id_name = []
+		url = requests.get('https://jsonplaceholder.typicode.com/users')
+		userinfo = url.json()
+		for i in userinfo:
+			eachgroup_id_name = {}
+			eachgroup_id_name['name'] = str(i['name'])
+			eachgroup_id_name['id'] = str(i['id'])
+			allgroups_id_name.append(eachgroup_id_name)
 
-	def capture(self):
-		global list1
-		list1=[]
-		url1=requests.get('https://jsonplaceholder.typicode.com/users')
-		bbb=url1.json()
-		#print bbb
-		for i in bbb:
-			dict1={}
-			#print i
-			#print str(i['username'])
-			#print str(i['id'])
-			dict1['name']=str(i['name'])
-			dict1['id']=str(i['id'])
-			#print dict1
-			list1.append(dict1)
-		print list1
-	def capture1(self):
-		global list2
-		list2=[]
-		url2=requests.get('https://jsonplaceholder.typicode.com/posts')
-		ddd=url2.json()
-		#print ddd
-		for j in ddd:
-			#print j
-			dict2={}
-			#print str(j['title'])
-			#print str(j['id'])
-			dict2['title']=str(j['title'])
-			dict2['id']=str(j['userId'])
-			#print dict2
-			list2.append(dict2)
-		print list2
+	def capture_articleinfo(self):
+		global allgroups_userid_title
+		allgroups_userid_title = []
+		url = requests.get('https://jsonplaceholder.typicode.com/posts')
+		articleinfo = url.json()
+		for i in articleinfo:
+			eachgroup_userid_title = {}
+			eachgroup_userid_title['title'] = str(i['title'])
+			eachgroup_userid_title['id'] = str(i['userId'])
+			allgroups_userid_title.append(eachgroup_userid_title)
 
-class datacleaning:
+class DataCleaning:
+	def cleaning_name_title(self):
+		global allgroups_name_title
+		allgroups_name_title = []
+		for i in allgroups_id_name:
+			for j in allgroups_userid_title:
+				eachgroup_name_title = {}
+				if i['id'] == j['id']:
+					eachgroup_name_title['name'] = i['name']
+					eachgroup_name_title['title'] = j['title']
+					allgroups_name_title.append(eachgroup_name_title)
 
-	def cleaning(self):
-		global list3
-		list3=[]
-		for m in list1:
-			
-			#print m
-			for n in list2:
-				dict3={}
-				if m['id']==n['id']:
-					dict3['name']=m['name']
-					dict3['title']=n['title']
-					list3.append(dict3)
-		print list3
-class writefile:
+class WriteFile:
 	def __init__(self,title,name):
-		self.title=title
-		self.name=name
+		self.title = title
+		self.name = name
 
-	def show(self):
-		print "标题：%s，作者：%s" %(self.title,self.name)
-		file_object=open('test.txt','a')
-		file_object.write("标题：%s，作者：%s\n" %(self.title,self.name))
-		file_object.close()
+	def show_title_name(self):
+		document.write("标题：%s，作者：%s\n" %(self.title,self.name))
 
+def main():
+	info = DataCapture()
+	info.capture_userinfo()
+	info.capture_articleinfo()
+	cleaning = DataCleaning()
+	cleaning.cleaning_name_title()
+	global document
+	document = open('title_name.txt','w')
+	for i in allgroups_name_title:
+		info_title_name = WriteFile(str(i['title']),str(i['name']))
+		info_title_name.show_title_name()
+	document.close()
 
-
-print hellooo55
-aaa=datacapture()
-aaa.capture()
-aaa.capture1()
-aaa1=datacleaning()
-aaa1.cleaning()
-#os.remove('test.txt')
-for p in list3:
-	aaa2=writefile(str(p['title']),str(p['name']))
-	aaa2.show()
-
+main()
 
